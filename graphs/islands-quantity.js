@@ -37,10 +37,9 @@ function numIslands(grid) {
 
 		visited.add(`${row}, ${col}`)
 
-		bfs(row, col + 1)
-		bfs(row, col - 1)
-		bfs(row + 1, col)
-		bfs(row - 1, col)
+		for (const [a,b] of [[0,1], [1,0], [0,-1], [-1,0]]) {
+			bfs(row + a, col + b)
+		}
 	}
 
 	function outOfBounds(row, col) {

@@ -27,36 +27,44 @@ function getAdjList(nodes, edges) {
 	return adjList
 }
 
-function bfsShortestPath(nodes, edges, start, end) {
-	const graph = getAdjList(nodes, edges)
-	const q = [start]
+function bfsShortestPath(nodes, edges, start, end, longest = false) {
+	const adjList = getAdjList(nodes, edges)
+	const q = [[start]]
 	const paths = {}
-	const visited = new Set()
 
-	while (q) {
-		const node = q.shift()
-		if (node === end) break
-		visited.add(node)
+	while (q.length) {
+		const path = q.pop()
+		const node = path.at(-1)
 
-		if (graph[node]) {
-			for (const neighbour of graph[node]) {
-				if (!visited.has(neighbour)) {
-					visited.add(neighbour)
-					q.push(neighbour)
-					paths[neighbour] = node
+		if (node === end) {
+			if (!paths[path.length]) {
+				paths[path.length] = [path]
+			} else {
+				paths[path.length].push(path)
+			}
+		} else {
+			if (adjList[node]) {
+				for (const neighbour of adjList[node]) {
+					if (!path.includes(neighbour)) {
+						q.push([...path, neighbour])
+					}
 				}
 			}
 		}
 	}
 
-	let path = [end]
-	let target = end
-	while (target in paths) {
-		path.push(paths[target])
-		target = paths[target]
-	}
+	let pathLength
+	Object.keys(paths).forEach(key => {
+		if (!pathLength) pathLength = key
+		if (longest) {
+			if (+key > pathLength) pathLength = key
+		} else {
+			if (+key < pathLength) pathLength = key
+		}
+	})
 
-	return path.reverse().join(' -> ')
+	if (!paths[pathLength]) return 'That way is not exists'
+	return paths[pathLength].map(path => path.join(' --> '))
 }
 
-console.log(bfsShortestPath(nodes, edges, 'a', 'g'))
+console.log(bfsShortestPath(nodes, edges, 'a', 'h', true))

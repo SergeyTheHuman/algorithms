@@ -15,35 +15,35 @@ const edges = [
 ]
 
 function getAdjList(nodes, edges) {
-	let adjList = {}
+	const adjList = {}
 
-	for (const [a, b, c] of edges) {
+	for (const [a, b, weight] of edges) {
 		if (!adjList[a]) adjList[a] = {}
 		if (!adjList[b]) adjList[b] = {}
-		adjList[a][b] = c
-		adjList[b][a] = c
+		adjList[a][b] = weight
+		adjList[b][a] = weight
 	}
 
 	for (const node of nodes) {
-		if (!(node in adjList)) adjList[node] = {}
+		if (!adjList[node]) adjList[node] = {}
 	}
 
 	return adjList
 }
 
 function findShortestPath(nodes, edges, start, end) {
-	const graph = getAdjList(nodes, edges)
 	const costs = {}
+	const graph = getAdjList(nodes, edges)
 	const visited = new Set()
 	const paths = {}
 
 	Object.keys(graph).forEach((node) => {
 		if (node === start) {
 			costs[node] = 0
-		} else {
-			const value = graph[start][node]
-			costs[node] = value || Infinity
+			return
 		}
+		const value = graph[start][node]
+		costs[node] = value || Infinity
 	})
 
 	let node = findLowestCostNode(costs, visited)
@@ -56,8 +56,8 @@ function findShortestPath(nodes, edges, start, end) {
 			const newCost = cost + neighbours[neighbour]
 
 			if (newCost < costs[neighbour]) {
-				paths[neighbour] = node
 				costs[neighbour] = newCost
+				paths[neighbour] = node
 			}
 		})
 
@@ -65,35 +65,41 @@ function findShortestPath(nodes, edges, start, end) {
 		node = findLowestCostNode(costs, visited)
 	}
 
-	let path = ''
-	let targetNode = end
-	let prevCost = 0
-	while (targetNode in costs) {
-		prevCost = costs[targetNode] - (costs[paths[targetNode]] || 0)
-		path += `${targetNode}>--${prevCost}--`
-		targetNode = paths[targetNode]
-	}
-	path += start
+	if (end === undefined) {
+		const shortestPaths = {}
+		for (const node of nodes) shortestPaths[node] = getPath(node, paths, costs, start)
 
-	if (costs[end] && costs[end] !== Infinity) {
-		return [path.split('').reverse().join(''), costs[end]]
+		return shortestPaths
 	} else {
-		return 'Данная точка недостижима'
+		return getPath(end, paths, costs, start)
 	}
+}
+
+function getPath(node, paths, costs, startNode) {
+	if (costs[node] === undefined) return `Path from "${startNode}" to "${node}" does not exist`
+
+	let path = ''
+	let target = node
+	while (target in costs) {
+		path += `${target} >—${costs[target] - (costs[paths[target]] || 0)}— `
+		target = paths[target]
+	}
+	path += startNode
+	return [path.split('').reverse().join(''), costs[node]]
 }
 
 function findLowestCostNode(costs, visited) {
 	let lowestCost = Infinity
-	let lowestNode
+	let lowestCostNode
 
 	Object.keys(costs).forEach((node) => {
 		if (!visited.has(node) && costs[node] < lowestCost) {
 			lowestCost = costs[node]
-			lowestNode = node
+			lowestCostNode = node
 		}
 	})
 
-	return lowestNode
+	return lowestCostNode
 }
 
-console.log(findShortestPath(nodes, edges, 'a', 'x'))
+console.log(findShortestPath(nodes, edges, 'a'))

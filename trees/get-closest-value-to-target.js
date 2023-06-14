@@ -54,21 +54,23 @@ const tree = {
  -5	  12 
 */
 
-// time O(log n) || space O(1)
 function getClosestValueInTree(root, target) {
-	if (target === root.value) return root.value
+	function dfs(node) {
+		if (target === node.value) return node.value
+		let nextClosest
 
-	let closest
+		if (target > node.value) {
+			nextClosest = node.right !== null ? dfs(node.right) : node.value
+		} else {
+			nextClosest = node.left !== null ? dfs(node.left) : node.value
+		} 
+		let currDiff = Math.abs(target - node.value)
+		let newDiff = Math.abs(target - nextClosest)
 
-	if (target > root.value) {
-		closest = root.right ? getClosestValueInTree(root.right, target) : root.value
-	} else {
-		closest = root.left ? getClosestValueInTree(root.left, target) : root.value
+		return currDiff < newDiff ? node.value : nextClosest
 	}
 
-	const diffRoot = Math.abs(root.value - target)
-	const diffClosest = Math.abs(closest - target)
-	return diffRoot > diffClosest ? closest : root.value
+	return dfs(root)
 }
 
-console.log(getClosestValueInTree(tree, 0))
+console.log(getClosestValueInTree(tree, 15))

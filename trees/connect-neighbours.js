@@ -53,30 +53,24 @@ const tree = {
 function connect(root) {
 	if (!root) return null
 
-	const queue = [root]
+	const q = [root]
 
-	while (queue.length) {
-		const levelSize = queue.length
-		const buf = []
+	while (q.length) {
+		const levelSize = q.length
+		const levelNodes = []
 
 		for (let i = 0; i < levelSize; i++) {
-			const node = queue.shift()
-			node.next = queue[0] || null
+			const node = q.shift()
+			node.next = q[0] || null
 
-			if (node.left) {
-				buf.push(node.left)
-			}
-
-			if (node.right) {
-				buf.push(node.right)
-			}
+			if (node.left) levelNodes.push(node.left)
+			if (node.right) levelNodes.push(node.right)
 		}
 
-		queue.push(...buf)
+		q.push(...levelNodes)
 	}
 
-	console.log(queue)
-	debugger
+	console.log(q)
 
 	return root
 }

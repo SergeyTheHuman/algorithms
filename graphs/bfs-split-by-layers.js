@@ -34,25 +34,25 @@ function bfsSplitByLayers(nodes, edges, start) {
 	const res = [[start]]
 
 	while (q.length) {
-		const depth = q.length
 		const levelNodes = []
+		const levelNodesQty = q.length
 
-		for (let i = 0; i < depth; i++) {
+		for (let i = 0; i < levelNodesQty; i++) {
 			const node = q.shift()
 			visited.add(node)
 
-			if (adjList[node]) {
-				for (const neighbour of adjList[node]) {
-					if (!visited.has(neighbour)) {
-						visited.add(neighbour)
-						levelNodes.push(neighbour)
-					}
+			if (!adjList[node]) continue
+
+			for (const neighbour of adjList[node]) {
+				if (!visited.has(neighbour)) {
+					visited.add(neighbour)
+					levelNodes.push(neighbour)
 				}
 			}
 		}
 
-		if (levelNodes.length) res.push(levelNodes)
 		q.push(...levelNodes)
+		if (levelNodes.length) res.push(levelNodes)
 	}
 
 	return res

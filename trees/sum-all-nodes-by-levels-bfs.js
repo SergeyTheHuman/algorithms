@@ -75,33 +75,30 @@ const tree = {
 	],
 }
 
-function sumAllNodesCycle(root) {
+function sumAllNodes(root) {
 	const q = [root]
-	const result = []
+	const result = {}
 	let level = 1
 
 	while (q.length) {
-		const levelQty = q.length
-		const levelNodes = []
+		const levelNodesQty = q.length
 		let levelResult = 0
 
-		for (let i = 0; i < levelQty; i++) {
+		for (let i = 0; i < levelNodesQty; i++) {
 			const node = q.shift()
 			levelResult += node.value
 
-			if (node.children) {
-				for (const child of node.children) {
-					levelNodes.push(child)
-				}
+			if (!node.children) continue
+			for (const child of node.children) {
+				q.push(child)
 			}
 		}
 
-		q.push(...levelNodes)
-		result.push({[level]: levelResult})
+		result[level] = levelResult
 		level++
 	}
 
 	return result
 }
 
-console.log(sumAllNodesCycle(tree))
+console.log(sumAllNodes(tree))

@@ -28,20 +28,20 @@ function getAdjList(nodes, edges) {
 }
 
 function bfsAllPaths(nodes, edges, start, end) {
-	const adjList = getAdjList(nodes, edges)
-	const q = [[start]]
 	const paths = []
+	const q = [[start]]
+	const adjList = getAdjList(nodes, edges)
 
 	while (q.length) {
-		const currentPath = q.shift()
-		const currentNode = currentPath.at(-1)
+		const path = q.shift()
+		const node = path.at(-1)
 
-		if (currentNode === end) {
-			paths.push(currentPath)
+		if (node === end) {
+			paths.push(path)
 		} else {
-			for (const neighbour of adjList[currentNode]) {
-				if (!currentPath.includes(neighbour)) {
-					q.push([...currentPath, neighbour])
+			if (adjList[node]) {
+				for (const neighbour of adjList[node]) {
+					if (!path.includes(neighbour)) q.push([...path, neighbour])
 				}
 			}
 		}
@@ -49,5 +49,4 @@ function bfsAllPaths(nodes, edges, start, end) {
 
 	return paths
 }
-
 console.log(bfsAllPaths(nodes, edges, 'a', 'g'))

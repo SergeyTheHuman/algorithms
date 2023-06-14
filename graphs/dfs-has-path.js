@@ -27,23 +27,20 @@ function getAdjList(nodes, edges) {
 	return adjList
 }
 
-function dfsHasPath(nodes, edges, start, target) {
+function dfsHasPath(nodes, edges, start, end) {
 	const adjList = getAdjList(nodes, edges)
 	const visited = new Set()
 
-	function search(node, target) {
-		if (node === target) return true
-		if (visited.has(node)) return false
-		visited.add(node)
-
-		if (adjList[node]) {
-			for (const neighbour of adjList[node]) {
-				if (search(neighbour, target)) return true
-			}
+	function search(start) {
+		if (start === end) return true
+		if (!adjList[start] || visited.has(start)) return false
+		visited.add(start)
+		for (const node of adjList[start]) {
+			if (search(node)) return true
 		}
 	}
 
-	return search(start, target) || false
+	return search(start) || false
 }
 
-console.log(dfsHasPath(nodes, edges, 'a', 'f'))
+console.log(dfsHasPath(nodes, edges, 'a', 'q'))
